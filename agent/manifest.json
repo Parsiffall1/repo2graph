@@ -1,0 +1,290 @@
+{
+  "format": "repo2graph/1",
+  "repo": "repo2graph",
+  "written": [
+    "agent/nodes.jsonl",
+    "agent/edges.jsonl",
+    "agent/chunks.jsonl",
+    "human/graph.graphml",
+    "agent/graph.cypher",
+    "human/overview.md",
+    "agent/overview.md",
+    "human/graph.html",
+    "agent/stats.json",
+    "agent/index.state.json",
+    "agent/parse.cache.json",
+    "agent/manifest.json"
+  ],
+  "sections": {
+    "human": "for people: prose map and drawings",
+    "agent": "for programs: the graph, the chunks, this manifest"
+  },
+  "files": {
+    "chunks.jsonl": "retrieval chunks, written whenever chunks are built regardless of --formats (split at ~4000 chars) plus residual and whole-file chunks; `text` opens with a header naming the chunk's neighbours",
+    "edges.jsonl": "one JSON object per edge: src, dst, type, plus edge attributes",
+    "graph.cypher": "idempotent MERGE script for Neo4j / Memgraph",
+    "graph.graphml": "the graph with a layout and yFiles node graphics, for yEd, Gephi, NetworkX or igraph",
+    "graph.html": "the interactive map, for a person in a browser",
+    "index.state.json": "per-file sha256 of the bytes that were indexed, for change detection between builds",
+    "manifest.json": "this file",
+    "nodes.jsonl": "one JSON object per node; `id` and `type` always present, the rest depends on type",
+    "overview.md": "the repo map in prose: languages, most depended-on files, most called symbols",
+    "parse.cache.json": "per-file symbols, imports and content hash, so `repo2graph build --incremental` can skip re-parsing files that did not change",
+    "stats.json": "node, edge and symbol counts, parse errors, entrypoint count"
+  },
+  "node_types": {
+    "repo": "the repository itself; one per index",
+    "dir": "a directory",
+    "file": "a source, doc or config file",
+    "symbol": "a function, method, class, struct, trait, interface, type or module",
+    "module": "an import target that is not a file in this repo",
+    "external": "a call target that could not be resolved in this repo (stdlib or third-party)"
+  },
+  "edge_types": {
+    "CONTAINS": "repo -> dir -> file",
+    "DEFINES": "file -> symbol, and symbol -> symbol nested inside it",
+    "IMPORTS": "file -> file (internal: true) or file -> module",
+    "CALLS": "symbol -> symbol in this repo; carries count and confidence",
+    "CALLS_EXTERNAL": "symbol -> external, a name that resolved to nothing in-repo",
+    "INHERITS": "symbol -> base class or interface",
+    "CO_CHANGE": "file <-> file, edited together in 3+ of the commits read by --git-history"
+  },
+  "id_grammar": {
+    "repo": "repo:<name>",
+    "dir": "dir:<path>",
+    "file": "file:<path>",
+    "symbol": "sym:<path>::<qualname>",
+    "module": "module:<import target>",
+    "external": "external:<name>",
+    "note": "Ids are stable and constructible by hand; paths are relative to the repo root."
+  },
+  "chunk_fields": [
+    "id",
+    "node_id",
+    "type",
+    "kind",
+    "path",
+    "lang",
+    "name",
+    "qualname",
+    "start_line",
+    "end_line",
+    "entrypoint",
+    "callers",
+    "callees",
+    "callees_external",
+    "text"
+  ],
+  "counts": {
+    "discovery": "git",
+    "files": 158,
+    "edge:CONTAINS": 179,
+    "parsed": 43,
+    "parse_errors": 0,
+    "symbol:function": 1045,
+    "edge:DEFINES": 1099,
+    "edge:IMPORTS": 379,
+    "symbol:class": 57,
+    "edge:CALLS_EXTERNAL": 2386,
+    "edge:CALLS": 2220,
+    "ambiguous_calls": 124,
+    "edge:INHERITS": 3,
+    "cochange_commits_skipped": 3,
+    "edge:CO_CHANGE": 169,
+    "entrypoints": 644,
+    "nodes": 1634,
+    "edges": 6435
+  },
+  "entrypoints": [
+    {
+      "id": "sym:repo2graph/mcp.py::main",
+      "path": "repo2graph/mcp.py",
+      "qualname": "main",
+      "kind": "function",
+      "reach": 159
+    },
+    {
+      "id": "sym:tests/test_mcp.py::test_serve_does_not_build_during_the_handshake",
+      "path": "tests/test_mcp.py",
+      "qualname": "test_serve_does_not_build_during_the_handshake",
+      "kind": "function",
+      "reach": 151
+    },
+    {
+      "id": "sym:repo2graph/cli.py::cmd_rag",
+      "path": "repo2graph/cli.py",
+      "qualname": "cmd_rag",
+      "kind": "function",
+      "reach": 141
+    },
+    {
+      "id": "sym:tests/test_cache.py::test_a_different_query_is_not_served_from_the_cache",
+      "path": "tests/test_cache.py",
+      "qualname": "test_a_different_query_is_not_served_from_the_cache",
+      "kind": "function",
+      "reach": 129
+    },
+    {
+      "id": "sym:tests/test_cache.py::test_an_unknown_tool_is_not_cached",
+      "path": "tests/test_cache.py",
+      "qualname": "test_an_unknown_tool_is_not_cached",
+      "kind": "function",
+      "reach": 129
+    },
+    {
+      "id": "sym:tests/test_cache.py::test_cache_stats_is_never_itself_cached",
+      "path": "tests/test_cache.py",
+      "qualname": "test_cache_stats_is_never_itself_cached",
+      "kind": "function",
+      "reach": 129
+    },
+    {
+      "id": "sym:tests/test_cache.py::test_dispatch_serves_a_repeat_from_the_cache",
+      "path": "tests/test_cache.py",
+      "qualname": "test_dispatch_serves_a_repeat_from_the_cache",
+      "kind": "function",
+      "reach": 129
+    },
+    {
+      "id": "sym:tests/test_tasks.py::test_a_failed_build_leaves_the_server_usable",
+      "path": "tests/test_tasks.py",
+      "qualname": "test_a_failed_build_leaves_the_server_usable",
+      "kind": "function",
+      "reach": 108
+    },
+    {
+      "id": "sym:repo2graph/cli.py::cmd_github",
+      "path": "repo2graph/cli.py",
+      "qualname": "cmd_github",
+      "kind": "function",
+      "reach": 102
+    },
+    {
+      "id": "sym:repo2graph/cli.py::cmd_build",
+      "path": "repo2graph/cli.py",
+      "qualname": "cmd_build",
+      "kind": "function",
+      "reach": 92
+    },
+    {
+      "id": "sym:tests/test_cache.py::test_a_rebuild_clears_the_cache",
+      "path": "tests/test_cache.py",
+      "qualname": "test_a_rebuild_clears_the_cache",
+      "kind": "function",
+      "reach": 85
+    },
+    {
+      "id": "sym:tests/test_mcp.py::test_auto_build_indexes_a_repo_that_has_no_index_yet",
+      "path": "tests/test_mcp.py",
+      "qualname": "test_auto_build_indexes_a_repo_that_has_no_index_yet",
+      "kind": "function",
+      "reach": 85
+    },
+    {
+      "id": "sym:tests/test_mcp.py::test_an_existing_index_is_never_rebuilt",
+      "path": "tests/test_mcp.py",
+      "qualname": "test_an_existing_index_is_never_rebuilt",
+      "kind": "function",
+      "reach": 83
+    },
+    {
+      "id": "sym:tests/test_mcp.py::test_auto_build_never_spawns_a_process_pool",
+      "path": "tests/test_mcp.py",
+      "qualname": "test_auto_build_never_spawns_a_process_pool",
+      "kind": "function",
+      "reach": 79
+    },
+    {
+      "id": "sym:tests/test_tasks.py::test_repo_build_status_is_never_cached",
+      "path": "tests/test_tasks.py",
+      "qualname": "test_repo_build_status_is_never_cached",
+      "kind": "function",
+      "reach": 63
+    },
+    {
+      "id": "sym:tests/test_tasks.py::test_repo_build_status_reports_a_live_task",
+      "path": "tests/test_tasks.py",
+      "qualname": "test_repo_build_status_reports_a_live_task",
+      "kind": "function",
+      "reach": 62
+    },
+    {
+      "id": "sym:tests/test_mcp.py::test_r7_dispatch_inherits_the_limit_clamp",
+      "path": "tests/test_mcp.py",
+      "qualname": "test_r7_dispatch_inherits_the_limit_clamp",
+      "kind": "function",
+      "reach": 58
+    },
+    {
+      "id": "sym:tests/test_mcp.py::test_r10_dispatch_inherits_the_note",
+      "path": "tests/test_mcp.py",
+      "qualname": "test_r10_dispatch_inherits_the_note",
+      "kind": "function",
+      "reach": 56
+    },
+    {
+      "id": "sym:tests/test_mcp.py::test_r5_dispatch_clamps_too",
+      "path": "tests/test_mcp.py",
+      "qualname": "test_r5_dispatch_clamps_too",
+      "kind": "function",
+      "reach": 56
+    },
+    {
+      "id": "sym:tests/test_repo2graph.py::test_refactor_preserves_graph_shape",
+      "path": "tests/test_repo2graph.py",
+      "qualname": "test_refactor_preserves_graph_shape",
+      "kind": "function",
+      "reach": 50
+    },
+    {
+      "id": "sym:repo2graph/http_server.py::MCPRequestHandler.do_POST",
+      "path": "repo2graph/http_server.py",
+      "qualname": "MCPRequestHandler.do_POST",
+      "kind": "function",
+      "reach": 49
+    },
+    {
+      "id": "sym:repo2graph/cli.py::cmd_embed",
+      "path": "repo2graph/cli.py",
+      "qualname": "cmd_embed",
+      "kind": "function",
+      "reach": 43
+    },
+    {
+      "id": "sym:tests/test_repo2graph.py::test_negative_max_files_is_not_a_tail_slice",
+      "path": "tests/test_repo2graph.py",
+      "qualname": "test_negative_max_files_is_not_a_tail_slice",
+      "kind": "function",
+      "reach": 41
+    },
+    {
+      "id": "sym:repo2graph/cli.py::cmd_query",
+      "path": "repo2graph/cli.py",
+      "qualname": "cmd_query",
+      "kind": "function",
+      "reach": 39
+    },
+    {
+      "id": "sym:tests/test_mcp.py::test_ac27_repo_search_returns_cited_markdown_within_the_default_budget",
+      "path": "tests/test_mcp.py",
+      "qualname": "test_ac27_repo_search_returns_cited_markdown_within_the_default_budget",
+      "kind": "function",
+      "reach": 39
+    }
+  ],
+  "entrypoint_rule": "a function or method that no CALLS edge points at and that is not nested inside another function",
+  "how_to_read": [
+    "Start with overview.md: it names the languages, the hub files and the most called symbols.",
+    "To trace a flow, start at a node with entrypoint: true \u2014 nothing in the repo calls it \u2014 and follow CALLS edges forward; nodes.jsonl also carries `reach`, the number of symbols an entry point can reach, for the busiest 200 of them.",
+    "To answer a question about code, score chunks.jsonl lexically or by embedding, then walk one hop out over CALLS/DEFINES/IMPORTS to pull in the neighbours. repo2graph.query.Index does both.",
+    "Chunk `callees` holds in-repo targets as path::qualname; `callees_external` holds bare stdlib and third-party names that were never resolved.",
+    "CALLS resolution is name-based, not type-based: an overloaded or shadowed name emits up to 5 candidate edges, each with confidence 1/n. Filter on confidence == 1.0 when a wrong edge would be costly.",
+    "GraphRAG retrieval protocol: score chunks.jsonl for the question, then expand one hop from each seed over CALLS out (callees), CALLS in (callers), DEFINES in (the defining file) and INHERITS out (base classes), keeping only CALLS edges whose confidence >= 1.0; pack the seeds first and the neighbours after, under a character budget, and cite every chunk as path:start-end from its start_line/end_line.",
+    "repo2graph.query.Index.pack_context implements that protocol and returns the packed markdown; `repo2graph rag \"<question>\" -o <outdir>` is the same thing from the command line (--min-conf sets the confidence filter, --no-expand turns the graph hop off)."
+  ],
+  "approximations": [
+    "Call resolution is name-based; ambiguous names fan out to up to 5 edges at 1/n confidence.",
+    "Dynamic dispatch, reflection and generated code are invisible to a parser.",
+    "Absence of an edge is not proof of absence of a call."
+  ]
+}
